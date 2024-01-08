@@ -1,0 +1,43 @@
+package com.ruifox.service;
+
+import com.ruifox.util.HtmlUtil;
+import com.ruifox.util.JsonUtil;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import static com.ruifox.util.ClipboardParser.getWrappedString;
+import static com.ruifox.util.ClipboardParser.processClipboard;
+import static com.ruifox.util.HtmlUtil.removeClassAndMsoStyles;
+
+/**
+ * @author 离狐千慕
+ * @version 1.0
+ * @date 2023/10/13 15:26
+ */
+public class ClipServer {
+    public static String getClipBoardData(){
+        try {
+//            获取原始剪切板数据
+            String clipboardData = processClipboard();
+//            处理剪切板数据，如果是空的就直接返回报错
+            String wr = getWrappedString(clipboardData);
+            if (wr==null){
+                return JsonUtil.failResp("<p>剪切板内数据非RTF(office标记语言)或剪切板为空！</p>");
+            }
+//            解析获取HTML数据
+            String wrappedString = "<html><head></head><body>"+ wr +"</body><html>";
+//            锁定获取到body，获取子元素进行数据处理，里边的数据就是剪切板数据
+            StringBuilder result = new StringBuilder();
+            Elements elements = Jsoup.parse(wrappedString).getElementsByTag("body").get(0).children();
+            for (Element item : elements) {
+                removeClassAndMsoStyles(item);
+                result.append(item.outerHtml());
+            }
+            return JsonUtil.successResp(HtmlUtil.covertImageInHtmlStringToBase64(result.toString()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JsonUtil.failResp("本地服务异常！请重新复制数据到剪切板。如果仍旧无效，请查看确保本程序有系统访问权限！");
+        }
+    }
+}

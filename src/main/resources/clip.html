@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>本地粘贴示例</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .ops{
+            width: 20%;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.05);
+            text-align: center;
+            border-right: rgba(255, 0, 0, 0.1) 2px solid;
+            box-shadow: rgba(169, 169, 169, 0.3) .5rem .5rem;
+            float: left;
+        }
+        .display{
+            width: 79%;
+            height: 100%;
+            text-align: center;
+            background-color: rgba(169, 169, 169, 0.2);
+            border-right: rgba(255, 0, 0, 0.1) 2px solid;
+            float: right;
+        }
+        .btn{
+            padding: 5px;
+            border: green solid 2px;
+            border-radius: 5px;
+            background-color: rgba(118, 183, 118, 0.25);
+            cursor: pointer;
+        }
+        .info{
+            font-size: .8rem;
+        }
+        .html-container{
+            width: 100%;
+            height: 92%;
+            background-color: rgba(255, 255, 255, 0.3);
+            overflow: scroll;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<!--界面主体-->
+<section style="width: 100vw;height: 100vh;background-color: rgba(58,130,58,0.1)">
+<!--    左侧操作区-->
+    <div class="ops">
+        <div style="font-size: 24px;padding-bottom: 1rem;border-bottom: orangered double 5px">操作区</div>
+        <label class="info">在这里进行Word（RTF格式）快捷导入操作,操作执行之前，请先</label>
+        <button onclick="wakeUpFoxClip()" style="text-decoration:none;color: green;font-weight: bolder">唤醒插件</button>
+        <div style="margin-top: 2rem"><button class="btn" onclick="getClipData()">导入剪切板数据</button></div>
+
+    </div>
+<!--    右侧展示区-->
+    <div class="display">
+        <div style="font-size: 24px;padding-bottom: 1rem;border-bottom: orangered double 5px">展示区</div>
+<!--        展示窗台-->
+        <div class="html-container" id="html"></div>
+    </div>
+</section>
+</body>
+<script lang="js">
+<!--    获取剪切板数据-->
+    getClipData=()=>{
+        const xhr = new XMLHttpRequest();
+        const url = "http://127.0.0.1:10086/clip";
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                // 通过dom操作添加到界面进行展示
+                document.getElementById("html").innerHTML=response.data;
+            }
+        };
+        xhr.send();
+    }
+//     唤醒插件
+wakeUpFoxClip = () => {
+    window.open("foxc://","_target");
+}
+</script>
+</html>

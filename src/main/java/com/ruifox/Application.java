@@ -1,7 +1,14 @@
 package com.ruifox;
 
+import com.ruifox.init.RunDir;
 import com.ruifox.service.ClipServer;
 import spark.Spark;
+import spark.utils.IOUtils;
+
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.http.Part;
+
+import java.io.InputStream;
 
 import static spark.Spark.*;
 
@@ -17,6 +24,8 @@ public class Application {
     public static void main(String[] args) {
 //        配置端口
         port(10086);
+//        初始化文件列表
+        RunDir.init();
 //        配置跨域
         Spark.before((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
@@ -26,5 +35,7 @@ public class Application {
         });
 //        获取剪切板
         get("/clip", (req, res) -> ClipServer.getClipBoardData());
+//        导入文件
+        post("/upload", (request, response) -> ClipServer.uploadAndAnalysis(request));
     }
 }

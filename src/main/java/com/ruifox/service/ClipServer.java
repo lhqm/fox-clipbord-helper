@@ -1,10 +1,21 @@
 package com.ruifox.service;
 
+import com.ruifox.init.RunDir;
+import com.ruifox.util.doc.DocToHtml;
+import com.ruifox.util.doc.DocxToHtml;
 import com.ruifox.util.HtmlUtil;
 import com.ruifox.util.JsonUtil;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import spark.Request;
+import spark.utils.IOUtils;
+
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletException;
+import javax.servlet.http.Part;
+import java.io.*;
 
 import static com.ruifox.util.ClipboardParser.getWrappedString;
 import static com.ruifox.util.ClipboardParser.processClipboard;
@@ -38,6 +49,48 @@ public class ClipServer {
         } catch (Exception e) {
             e.printStackTrace();
             return JsonUtil.failResp("本地服务异常！请重新复制数据到剪切板。如果仍旧无效，请查看确保本程序有系统访问权限！");
+        }
+    }
+
+    public static String uploadAndAnalysis(Request request) throws ServletException, IOException {
+        // 设置文件上传配置
+        request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
+
+        // 获取上传的文件部分
+        Part filePart = request.raw().getPart("file");
+        System.out.println("文件名:" + filePart.getSubmittedFileName());
+        // 读取文件内容
+        try (InputStream fis = filePart.getInputStream()) {
+            new FileOutputStream(RunDir.directoryPath+"/" + filePart.getSubmittedFileName()).write(IOUtils.toByteArray(fis));
+            FileInputStream inputStream=new FileInputStream(RunDir.directoryPath+"/" + filePart.getSubmittedFileName());
+            InputStream is = new BufferedInputStream(inputStream);
+            String s="非word文档类型！";
+//            doc解析
+            if (FileMagic.valueOf(is).equals(FileMagic.OLE2)) {
+                is.close();
+                inputStream.close();
+                s = DocToHtml.inputDocPath(RunDir.directoryPath+"/" + filePart.getSubmittedFileName());
+            }
+//            docx解析
+            else if (FileMagic.valueOf(is).equals(FileMagic.OOXML)){
+                is.close();
+                inputStream.close();
+                s= DocxToHtml.inputDocxPath(RunDir.directoryPath+"/" + filePart.getSubmittedFileName());
+            }
+//            其他情况，删文件返回
+            else {
+                is.close();
+                fis.close();
+                inputStream.close();
+                new File(RunDir.directoryPath+"/" + filePart.getSubmittedFileName()).delete();
+            }
+            return JsonUtil.successResp(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JsonUtil.failResp("文件上传失败！");
+        }finally {
+            // 删除临时文件
+            filePart.delete();
         }
     }
 }

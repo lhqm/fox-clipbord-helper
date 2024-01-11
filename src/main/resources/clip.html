@@ -53,6 +53,7 @@
         <label class="info">在这里进行Word（RTF格式）快捷导入操作,操作执行之前，请先</label>
         <button onclick="wakeUpFoxClip()" style="text-decoration:none;color: green;font-weight: bolder">唤醒插件</button>
         <div style="margin-top: 2rem"><button class="btn" onclick="getClipData()">导入剪切板数据</button></div>
+        <input type="file" id="file" onchange="uploadFileAndGetClipData()" placeholder="在这里上传word文件">
 
     </div>
 <!--    右侧展示区-->
@@ -78,6 +79,40 @@
         };
         xhr.send();
     }
+//     导入数据
+// 上传文件并获取剪切板数据
+uploadFileAndGetClipData = () => {
+    const fileInput = document.getElementById('file'); // 替换成实际的文件输入框ID
+    const file = fileInput.files[0];
+
+    const xhr = new XMLHttpRequest();
+    const url = "http://127.0.0.1:10086/upload";
+
+    // 创建FormData对象，并将文件添加到其中
+    const formData = new FormData();
+    formData.append("file", file);
+
+    xhr.open("POST", url, true);
+
+    // 设置请求头，不需要手动设置Content-Type，FormData会自动处理
+    // xhr.setRequestHeader("Content-Type", "multipart/form-data");
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                // 通过DOM操作将响应输出到界面
+                document.getElementById("html").innerHTML = response.data;
+            } else {
+                document.getElementById("html").innerHTML = "上传失败,请重试或联系管理员询问具体情况";
+            }
+        }
+    };
+
+    // 发送FormData对象
+    xhr.send(formData);
+};
+
 //     唤醒插件
 wakeUpFoxClip = () => {
     window.open("foxc://","_target");

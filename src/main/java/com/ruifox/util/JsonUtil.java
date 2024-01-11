@@ -7,12 +7,12 @@ import com.alibaba.fastjson.JSONObject;
  * @date 2023/10/16 16:07
  */
 public class JsonUtil {
-    public static String resp(Integer code,String data){
-        JSONObject json=new JSONObject();
-        json.put("code",code);
-        json.put("data",data);
-        return json.toJSONString();
-    }
+        public static String resp(Integer code,String data){
+            JSONObject json=new JSONObject();
+            json.put("code",code);
+            json.put("data",data);
+            return json.toJSONString();
+        }
 
     public static String successResp(String data){
         return resp(200,data);

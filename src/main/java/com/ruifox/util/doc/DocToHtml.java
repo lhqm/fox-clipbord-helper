@@ -31,6 +31,8 @@ public class DocToHtml {
         File file = new File(filePath);
         try(FileInputStream inputStream=new FileInputStream(file)) {
             HWPFDocument hwpfDocument = new HWPFDocument(inputStream);
+//            提前关闭，让gc线程和文件系统进入回收阶段
+            inputStream.close();
             // 提取图像数据并转换为 BASE64 编码字符串
             List<Picture> pictures = hwpfDocument.getPicturesTable().getAllPictures();
             List<String> base64ImageStrings = new ArrayList<>();
@@ -67,11 +69,6 @@ public class DocToHtml {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             boolean delete = file.delete();
             System.out.println("删除文件：" + filePath + "成功：" + delete);
         }

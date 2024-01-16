@@ -23,6 +23,8 @@ public class DocxToHtml {
         try {
             // 将上传的文件传入Document转换
             XWPFDocument docxDocument = new XWPFDocument(is);
+//            提前关闭流
+            is.close();
             XHTMLOptions options = XHTMLOptions.create();
             // 设置图片存储路径
             String path = System.getProperty("java.io.tmpdir");
@@ -35,7 +37,7 @@ public class DocxToHtml {
             String htmlStr = htmlStream.toString();
 
             Document doc = Jsoup.parse(htmlStr);
-            doc.getElementsByTag("head").get(0).appendChild(new org.jsoup.nodes.Element("meta").attr("charset", "utf-8"));
+//            doc.getElementsByTag("head").get(0).appendChild(new org.jsoup.nodes.Element("meta").attr("charset", "utf-8"));
             doc.getElementsByTag("img").forEach(img -> {
 //                获取到图片路径
                 String src = img.attr("src");

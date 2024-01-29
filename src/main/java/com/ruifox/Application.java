@@ -1,7 +1,10 @@
 package com.ruifox;
 
+import com.ruifox.config.AuthorizationFilter;
+import com.ruifox.exception.NoAuthorizationException;
 import com.ruifox.init.RunDir;
 import com.ruifox.service.ClipServer;
+import com.ruifox.util.JsonUtil;
 import spark.Spark;
 import spark.utils.IOUtils;
 
@@ -32,6 +35,13 @@ public class Application {
             response.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             response.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
             response.header("Access-Control-Allow-Credentials", "true");
+        });
+//        注册配置拦截器
+//        Spark.before(new AuthorizationFilter());
+//        注册异常处理器
+        Spark.exception(NoAuthorizationException.class, (exception, request, response) -> {
+            response.body(JsonUtil.failResp(exception.getMessage()));
+            response.type("application/json");
         });
 //        获取剪切板
         get("/clip", (req, res) -> ClipServer.getClipBoardData());

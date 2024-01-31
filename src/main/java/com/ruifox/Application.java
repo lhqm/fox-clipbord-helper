@@ -36,6 +36,12 @@ public class Application {
             response.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
             response.header("Access-Control-Allow-Credentials", "true");
         });
+//        自定义未命中路由处理器
+        notFound((req,res)->{
+//            res.status(4040);
+//            res.body("不存在的路径，请查看软件版本是否正确。");
+            return JsonUtil.resp(4040,"您正在访问不存在的接口，请查看粘贴控件版本是否正确。");
+        });
 //        注册配置拦截器
 //        Spark.before(new AuthorizationFilter());
 //        注册异常处理器

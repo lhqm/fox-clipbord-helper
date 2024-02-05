@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -29,7 +30,9 @@ public class DocToHtml {
      */
     public static String inputDocPath(String filePath) {
         File file = new File(filePath);
-        try(FileInputStream inputStream=new FileInputStream(file)) {
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
             HWPFDocument hwpfDocument = new HWPFDocument(inputStream);
 //            提前关闭，让gc线程和文件系统进入回收阶段
             inputStream.close();
@@ -69,6 +72,13 @@ public class DocToHtml {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
+            if (inputStream!=null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    System.out.println("关闭失败");
+                }
+            }
             boolean delete = file.delete();
             System.out.println("删除文件：" + filePath + "成功：" + delete);
         }

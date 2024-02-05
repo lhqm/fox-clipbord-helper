@@ -61,37 +61,24 @@ public class ClipServer {
         // 获取上传的文件部分
         Part filePart = request.raw().getPart("file");
         System.out.println("文件名:" + filePart.getSubmittedFileName());
-
         // 读取文件内容
-        try (InputStream fis = filePart.getInputStream();
-             FileInputStream inputStream = new FileInputStream(RunDir.directoryPath + "/" + filePart.getSubmittedFileName());
-             InputStream is = new BufferedInputStream(inputStream)) {
+        InputStream is = null;
+        try (InputStream fis = filePart.getInputStream();) {
+//            建立输出流
             new FileOutputStream(RunDir.directoryPath + "/" + filePart.getSubmittedFileName()).write(IOUtils.toByteArray(fis));
-//            通过责任链模式返回数据
+            FileInputStream inputStream = new FileInputStream(RunDir.directoryPath + "/" + filePart.getSubmittedFileName());
+            is = new BufferedInputStream(inputStream);
+            //获取文件类型
+            FileMagic fileMagic = FileMagic.valueOf(is);
+            System.out.println(fileMagic);
+            //关闭输入流
+            inputStream.close();
+            is.close();
+            //通过责任链模式返回数据
             String s = FileHandlerFactory
                     .getHandlerChain()
-                    .handleRequest(new FileRequest(FileMagic.valueOf(is), RunDir.directoryPath + "/" + filePart.getSubmittedFileName()));
-////            doc解析
-//            if (FileMagic.valueOf(is).equals(FileMagic.OLE2)) {
-//                is.close();
-//                inputStream.close();
-//                s = DocToHtml.inputDocPath(RunDir.directoryPath+"/" + filePart.getSubmittedFileName());
-//            }
-////            docx解析
-//            else if (FileMagic.valueOf(is).equals(FileMagic.OOXML)){
-//                is.close();
-//                inputStream.close();
-//                s= DocxToHtml.inputDocxPath(RunDir.directoryPath+"/" + filePart.getSubmittedFileName());
-//            }
-////            xls解析
-//
-////            其他情况，删文件返回
-//            else {
-//                is.close();
-//                fis.close();
-//                inputStream.close();
-//                new File(RunDir.directoryPath+"/" + filePart.getSubmittedFileName()).delete();
-//            }
+                    .handleRequest(new FileRequest(fileMagic, RunDir.directoryPath + "/" + filePart.getSubmittedFileName()));
+//            包装返回数据
             return JsonUtil.successResp(s);
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,6 +2,7 @@ package com.ruifox.handler.base;
 
 import com.ruifox.handler.DOCHandler;
 import com.ruifox.handler.DOCXHandler;
+import com.ruifox.handler.PDFHandler;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -30,11 +31,13 @@ public class FileHandlerFactory {
         FileHandler docxHandler = new DOCXHandler();
         // 设置DOCXHandler的下一个处理器为DOCHandler
         docxHandler.setNextHandler(docHandler);
-
+//        设置doc后一个处理器为PDF处理器
+        PDFHandler pdfHandler = new PDFHandler();
+        docHandler.setNextHandler(pdfHandler);
 
         // 最后，兜底的处理器会处理一切
         NoSuchFileTypeHandler noSuchFileTypeHandler = new NoSuchFileTypeHandler();
-        docHandler.setNextHandler(noSuchFileTypeHandler);
+        pdfHandler.setNextHandler(noSuchFileTypeHandler);
         return docxHandler;
     }
 }

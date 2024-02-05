@@ -35,17 +35,35 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>4.1.2</version>
+            <version>5.2.0</version>
         </dependency>
+<!--        PDF解析-->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.24</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.cssbox</groupId>
+            <artifactId>pdf2dom</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+<!--        excel解析器-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-excelant</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>4.1.2</version>
+            <version>5.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
-            <version>4.1.2</version>
+            <version>5.2.0</version>
         </dependency>
         <dependency>
             <groupId>fr.opensagres.xdocreport</groupId>

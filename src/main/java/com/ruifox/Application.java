@@ -1,5 +1,6 @@
 package com.ruifox;
 
+import com.ruifox.api.CpApi;
 import com.ruifox.config.AuthorizationFilter;
 import com.ruifox.exception.NoAuthorizationException;
 import com.ruifox.init.RunDir;
@@ -49,9 +50,7 @@ public class Application {
             response.body(JsonUtil.failResp(exception.getMessage()));
             response.type("application/json");
         });
-//        获取剪切板
-        get("/clip", (req, res) -> ClipServer.getClipBoardData());
-//        导入文件
-        post("/upload", (request, response) -> ClipServer.uploadAndAnalysis(request));
+//        插件主体功能相关API
+        path("", CpApi::defineRoutes);
     }
 }

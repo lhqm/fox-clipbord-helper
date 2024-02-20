@@ -29,7 +29,7 @@ public class RunDir {
     }
 
     // 递归删除目录及其内容
-    private static void deleteDirectory(File directory) {
+    public static void deleteDirectory(File directory) {
         File[] files = directory.listFiles();
         if (files != null) {
             for (File file : files) {

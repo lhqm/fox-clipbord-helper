@@ -3,9 +3,8 @@ package com.ruifox.handler.base;
 import com.ruifox.handler.DOCHandler;
 import com.ruifox.handler.DOCXHandler;
 import com.ruifox.handler.PDFHandler;
+import com.ruifox.handler.PPTHandler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,32 +20,34 @@ public class FileHandlerFactory {
     public static FileHandler getHandlerChain() {
         // 如果链还没有被初始化，就创建它
         if (HANDLER_CHAIN.get() == null) {
-            // 设置责任链的head节点为DOCXHandler
+            // 设置责任链的head节点，为责任链进行实例化
             HANDLER_CHAIN.set(fileProcessFilterRegistry());
         }
         // 返回责任链的head节点
         return HANDLER_CHAIN.get();
     }
 
+    /**
+     * 注册过滤器链
+     * @return 过滤器链头部节点
+     */
+
     private static FileHandler fileProcessFilterRegistry(){
-//        // 创建DOCHandler和DOCXHandler的实例
-//        FileHandler docHandler = new DOCHandler();
-//        FileHandler docxHandler = new DOCXHandler();
-//        // 设置DOCXHandler的下一个处理器为DOCHandler
-//        docxHandler.setNextHandler(docHandler);
-////        设置doc后一个处理器为PDF处理器
-//        PDFHandler pdfHandler = new PDFHandler();
-//        docHandler.setNextHandler(pdfHandler);
-//
-//        // 最后，兜底的处理器会处理一切
-//        NoSuchFileTypeHandler noSuchFileTypeHandler = new NoSuchFileTypeHandler();
-//        pdfHandler.setNextHandler(noSuchFileTypeHandler);
-//        return docxHandler;
 //        构造处理器链
+//        这里注意，PPT的处理器需要放在第一个，因为PPT的头和doc的fileMagic有重叠
         return constructorChain(
-                List.of(new DOCHandler(),new DOCXHandler(),new PDFHandler())
+                List.of(new PPTHandler(),new DOCHandler(),new DOCXHandler(),new PDFHandler())
         );
     }
+
+    /**
+     * 过滤器链条构造器
+     * 主要将处理器全部由list转换为chain
+     * 并为该chain拼接一个默认处理器作为尾部
+     * @param handlers 处理器集合
+     * @return 处理器头部节点
+     * @param <E> 处理器
+     */
 
     private static <E extends FileHandler> FileHandler constructorChain(List<E> handlers){
 //        循环添加处理器

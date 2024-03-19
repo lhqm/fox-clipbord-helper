@@ -1,5 +1,8 @@
 package com.ruifox.init;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 
 /**
@@ -10,6 +13,7 @@ import java.io.File;
  */
 public class RunDir {
     public static final String directoryPath = "./files";
+    static Logger log = LoggerFactory.getLogger(RunDir.class);
     public static void init() {
 
         File directory = new File(directoryPath);
@@ -22,9 +26,9 @@ public class RunDir {
         // 创建目录
         boolean created = directory.mkdirs();
         if (created) {
-            System.out.println("目录创建成功");
+            log.info("文件临时目录已初始化");
         } else {
-            System.out.println("目录创建失败");
+            log.error("文件临时目录初始化失败");
         }
     }
 

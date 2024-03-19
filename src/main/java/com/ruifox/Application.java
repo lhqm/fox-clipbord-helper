@@ -1,18 +1,11 @@
 package com.ruifox;
 
 import com.ruifox.api.CpApi;
-import com.ruifox.config.AuthorizationFilter;
 import com.ruifox.exception.NoAuthorizationException;
 import com.ruifox.init.RunDir;
-import com.ruifox.service.ClipServer;
+import com.ruifox.init.SparkApplication;
 import com.ruifox.util.JsonUtil;
 import spark.Spark;
-import spark.utils.IOUtils;
-
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.http.Part;
-
-import java.io.InputStream;
 
 import static spark.Spark.*;
 
@@ -26,8 +19,10 @@ import static spark.Spark.*;
  */
 public class Application {
     public static void main(String[] args) {
+
 //        配置端口
-        port(10086);
+//        port(10086);
+        SparkApplication.run(10086);
 //        初始化文件列表
         RunDir.init();
 //        配置跨域
@@ -39,8 +34,6 @@ public class Application {
         });
 //        自定义未命中路由处理器
         notFound((req,res)->{
-//            res.status(4040);
-//            res.body("不存在的路径，请查看软件版本是否正确。");
             return JsonUtil.resp(4040,"您正在访问不存在的接口，请查看粘贴控件版本是否正确。");
         });
 //        注册配置拦截器

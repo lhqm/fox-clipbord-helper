@@ -39,10 +39,14 @@ public class ClipServer {
                 return JsonUtil.failResp("<p>剪切板内数据非RTF(office标记语言)或剪切板为空！</p>");
             }
 //            解析获取HTML数据
-            String wrappedString = "<html><head></head><body>"+ wr +"</body><html>";
+            String wrappedString = "<html><head></head><body><div>"+ wr +"</div></body><html>";
 //            锁定获取到body，获取子元素进行数据处理，里边的数据就是剪切板数据
             StringBuilder result = new StringBuilder();
             Elements elements = Jsoup.parse(wrappedString).getElementsByTag("body").get(0).children();
+//            如果为0，则可能是里边是纯文本
+//            if (elements.size()==0){
+//                return JsonUtil.successResp(Jsoup.parse(wrappedString).getElementsByTag("body").get(0).html());
+//            }
             for (Element item : elements) {
                 removeClassAndMsoStyles(item);
                 result.append(item.outerHtml());

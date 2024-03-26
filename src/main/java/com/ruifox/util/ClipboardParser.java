@@ -37,12 +37,6 @@ public class ClipboardParser {
                         resultBuilder.append("<p>").append(text).append("</p>");
                     }
                 }
-//                else if (dataFlavor.isMimeTypeEqual("image/png")) {
-                    // Handle image data
-//                    Image image = (Image) clipTf.getTransferData(dataFlavor);
-//                    String imageBase64 = imageToBase64(image);
-//                    resultBuilder.append("<img src='data:image/png;base64,").append(imageBase64).append("' />");
-//                }
             }
         }
         return resultBuilder.toString();
